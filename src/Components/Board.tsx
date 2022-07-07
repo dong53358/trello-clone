@@ -9,6 +9,9 @@ const Wrapper = styled.div`
   background-color: ${(props) => props.theme.boardColor};
   border-radius: 5px;
   min-height: 300px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Title = styled.h2`
@@ -16,6 +19,11 @@ const Title = styled.h2`
   font-weight: 600;
   margin-bottom: 10px;
   font-size: 18px;
+`;
+
+const Area = styled.div`
+  background-color: blue;
+  flex-grow: 1;
 `;
 
 interface IBoardProps {
@@ -29,12 +37,12 @@ function Board({ toDos, boardId }: IBoardProps) {
       <Title>{boardId}</Title>
       <Droppable droppableId={boardId}>
         {(magic) => (
-          <Wrapper ref={magic.innerRef} {...magic.droppableProps}>
+          <Area ref={magic.innerRef} {...magic.droppableProps}>
             {toDos.map((toDo, index) => (
               <DragabbleCard key={toDo} index={index} toDo={toDo} />
             ))}
             {magic.placeholder}
-          </Wrapper>
+          </Area>
         )}
       </Droppable>
     </Wrapper>

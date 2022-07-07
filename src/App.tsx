@@ -23,17 +23,36 @@ const Boards = styled.div`
 
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
-  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+  const onDragEnd = (info: DropResult) => {
+    console.log(info);
+    const { destination, draggableId, source } = info;
     if (!destination) return;
-    /* setToDos((oldTodos) => {
-      const toDosCopy = [...oldTodos];
-      // 1) Delete item on source.index
-      toDosCopy.splice(source.index, 1);
-      // 2) Put back the item on the destination.index
-      toDosCopy.splice(destination?.index, 0, draggableId);
-      return toDosCopy;
-    });
-    */
+    if (destination?.droppableId === source.droppableId) {
+      // same board movement/
+      setToDos((allBoard) => {
+        const boardCopy = [...allBoard[source.droppableId]];
+        boardCopy.splice(source.index, 1);
+        boardCopy.splice(destination?.index, 0, draggableId);
+        return {
+          ...allBoard,
+          [source.droppableId]: boardCopy,
+        };
+      });
+    }
+    if (destination.droppableId !== source.droppableId) {
+      // cross board movement
+      setToDos((allBoards) => {
+        const sourceBoard = [...allBoards[source.droppableId]];
+        const destinationBoard = [...allBoards[destination.droppableId]];
+        sourceBoard.splice(source.index, 1);
+        destinationBoard.splice(destination.index, 0, draggableId);
+        return {
+          ...allBoards,
+          [source.droppableId]: sourceBoard,
+          [destination.droppableId]: destinationBoard,
+        };
+      });
+    }
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
