@@ -127,14 +127,15 @@ function Board({ toDos, boardId }: IBoardProps) {
             ref={magic.innerRef}
             {...magic.droppableProps}
           >
-            {toDos.map((toDo, index) => (
-              <DragabbleCard
-                key={toDo.id}
-                index={index}
-                toDoId={toDo.id}
-                toDoText={toDo.text}
-              />
-            ))}
+            {toDos &&
+              toDos.map((toDo, index) => (
+                <DragabbleCard
+                  key={toDo.id}
+                  index={index}
+                  toDoId={toDo.id}
+                  toDoText={toDo.text}
+                />
+              ))}
             {magic.placeholder}
           </Area>
         )}
