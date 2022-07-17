@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { Droppable } from "react-beautiful-dnd";
+import { FormEvent, ReactHTMLElement, useRef } from "react";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
@@ -17,11 +17,32 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const Title = styled.h2`
-  text-align: center;
+const Title = styled.div`
+  display: flex;
+  justify-content: space-between;
   font-weight: 600;
   margin-bottom: 10px;
   font-size: 18px;
+`;
+
+const BoardName = styled.div`
+  margin-left: 10px;
+`;
+
+const BoardDelBtn = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #dadfe9;
+  border: 0px;
+  border-radius: 6px;
+  font-size: 20px;
+  font-weight: 600;
+  width: 25px;
+  height: 25px;
+  &:hover {
+    background-color: red;
+  }
 `;
 
 interface IAreaProps {
@@ -61,6 +82,13 @@ interface IForm {
 function Board({ toDos, boardId }: IBoardProps) {
   const setToDos = useSetRecoilState(toDoState);
   const { register, setValue, handleSubmit } = useForm<IForm>();
+  const onClick = (event: FormEvent<HTMLButtonElement>) => {
+    setToDos((prevToDos) => {
+      const copyToDos = { ...prevToDos };
+      delete copyToDos[event.currentTarget.value];
+      return { ...copyToDos };
+    });
+  };
   const onValid = ({ toDo }: IForm) => {
     const newToDo = {
       id: Date.now(),
@@ -76,7 +104,14 @@ function Board({ toDos, boardId }: IBoardProps) {
   };
   return (
     <Wrapper>
-      <Title>{boardId}</Title>
+      <Title>
+        <div> </div>
+        <BoardName>{boardId}</BoardName>
+        <BoardDelBtn value={boardId} onClick={onClick}>
+          x
+        </BoardDelBtn>
+      </Title>
+
       <Form onSubmit={handleSubmit(onValid)}>
         <input
           {...register("toDo", { required: true })}
